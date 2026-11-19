@@ -1,0 +1,29 @@
+{% extends "job_boardApp/base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h3>Leave Feedback</h3>
+        <p class="text-muted">
+            Interview for <strong>{{ invite.match.job.title }}</strong>
+            ({{ invite.interview_date }} at {{ invite.interview_time }})
+        </p>
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label">Rating (1 = poor, 5 = excellent)</label>
+                <select name="rating" class="form-select" required>
+                    <option value="">Choose a rating</option>
+                    {% for i in "12345" %}
+                        <option value="{{ i }}" {% if existing.rating|stringformat:"s" == i %}selected{% endif %}>{{ i }} {% if i == "5" %}★★★★★{% elif i == "4" %}★★★★{% elif i == "3" %}★★★{% elif i == "2" %}★★{% else %}★{% endif %}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Comments (optional)</label>
+                <textarea name="comments" class="form-control" rows="3">{% if existing %}{{ existing.comments }}{% endif %}</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">{% if existing %}Update Feedback{% else %}Submit Feedback{% endif %}</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

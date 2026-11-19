@@ -1,0 +1,76 @@
+{% extends "job_boardApp/base.html" %}
+{% block content %}
+
+<h3>Candidates for {{ job.title }}</h3>
+<p class="text-muted">{{ job.location }} • {{ job.min_experience }}+ yrs experience required</p>
+
+<div class="alert alert-info">
+    <strong>💡 Hiring advice:</strong> {{ advice.summary }}
+</div>
+
+{% if advice.tiebreak_note %}
+<div class="alert alert-warning">
+    {{ advice.tiebreak_note }}
+</div>
+{% endif %}
+
+<div class="table-responsive">
+    <table class="table table-hover align-middle">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Candidate</th>
+                <th>Match</th>
+                <th>Experience</th>
+                <th>Location</th>
+                <th>CV</th>
+                <th>Shortlist</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in advice.candidates %}
+            {% with match=item.match latest_invite=item.match.invites.first %}
+            <tr class="{% if item.recommended %}table-success{% endif %}">
+                <td>{{ forloop.counter }}</td>
+                <td>{{ match.job_seeker.full_name }}</td>
+                <td>
+                    <span class="badge bg-{{ item.color }}">{{ item.percentage }}% — {{ item.label }}</span>
+                </td>
+                <td>{{ match.job_seeker.experience_years }} yrs</td>
+                <td>{{ match.job_seeker.location }}</td>
+                <td>{% if match.job_seeker.cv %}✔{% else %}—{% endif %}</td>
+                <td>
+                    {% if item.recommended %}
+                        <span class="badge bg-success">Recommended</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Waitlist</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'job_boardApp:candidate_detail' match.job_seeker.id %}" class="btn btn-sm btn-outline-primary">View</a>
+                    {% if not latest_invite %}
+                        <a href="{% url 'job_boardApp:send_interview_invite' match.id %}" class="btn btn-sm btn-success">Send Invite</a>
+                    {% elif latest_invite.status == "pending" %}
+                        <span class="badge bg-warning text-dark">Pending Response</span>
+                    {% elif latest_invite.status == "accepted" %}
+                        <span class="badge bg-success">Accepted</span>
+                    {% elif latest_invite.status == "declined" %}
+                        <span class="badge bg-danger">Declined</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endwith %}
+            {% empty %}
+            <tr><td colspan="8" class="text-muted text-center">No candidates matched yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<p class="text-muted small">
+    Rows highlighted green are the recommended shortlist (top {{ max_slots }} interview slot{{ max_slots|pluralize }}).
+    Ranking uses match score first, then experience, same-location, and CV-on-file as tiebreakers.
+</p>
+
+{% endblock %}

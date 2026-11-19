@@ -1,0 +1,85 @@
+{% extends "job_boardApp/base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h3>Job Seeker Sign Up</h3>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                <input type="text" name="username" class="form-control" required
+                pattern="(?=.*[A-Za-z])[A-Za-z0-9_]{3,30}"
+                title="3-30 characters with at least one letter (numbers and underscores are allowed, but not numbers only)"
+                value="{{ form_data.username }}">
+                <div class="form-text">At least one letter. Letters only is fine; numbers alone are not allowed.</div>
+            </div>
+                      <div class="mb-3">
+                <label class="form-label">Password</label>
+                <input type="password" name="password" class="form-control" required minlength="10"
+                       pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{10,}"
+                       title="At least 10 characters with an uppercase letter, a lowercase letter, a number and a symbol">
+                <div class="form-text"></div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Full Name</label>
+                <input type="text" name="full_name" class="form-control" required
+                       pattern="[A-Za-z][A-Za-z\s'.,\-]*" title="Letters only, no numbers"
+                       value="{{ form_data.full_name }}">
+            </div>
+
+            <div class="mb-3">
+    <label class="form-label">Date of Birth</label>
+    <input type="date" name="date_of_birth" id="dob" class="form-control" required
+           max="{{ dob_max }}" value="{{ form_data.date_of_birth }}">
+    <div class="form-text">Age: <strong id="age-display">—</strong></div>
+</div>
+            <div class="mb-3">
+                <label class="form-label">Job Title / Role</label>
+                <input type="text" name="jtitle" class="form-control" placeholder="e.g. IT Assistant"
+                       pattern="[A-Za-z][A-Za-z\s'.,\-]*" title="Letters only, no numbers"
+                       value="{{ form_data.jtitle }}">
+                <div class="form-text">Your current or desired role</div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Skills</label>
+                <input type="text" name="skills" class="form-control" required
+                       placeholder="e.g. for Developer: Java, SQL and Python"
+                       value="{{ form_data.skills }}">
+                <div class="form-text">Comma-separated, letters only.</div>
+            </div>
+            <div class="mb-3">
+    <label class="form-label">Curriculum Vitae  <span class="text-muted">upload your CV</span></label>
+    <input type="file" name="cv" class="form-control" accept=".pdf,.docx,.txt">
+    <div class="form-text">PDF, DOCX or TXT, max 5 MB.</div>
+</div>
+            <div class="mb-3">
+                <label class="form-label">Location</label>
+                <input type="text" name="location" class="form-control" placeholder="e.g. Harare" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Years of Experience</label>
+                <input type="number" name="experience_years" class="form-control" min="0" max="60"
+                       value="{{ form_data.experience_years|default:'0' }}">
+            </div>
+            <button type="submit" class="btn btn-primary">Create Job Seeker Account</button>
+        </form>
+    </div>
+</div>
+
+<script>
+(function () {
+    const dob = document.getElementById("dob");
+    const out = document.getElementById("age-display");
+    function update() {
+        if (!dob.value) { out.textContent = "—"; return; }
+        const b = new Date(dob.value), t = new Date();
+        let age = t.getFullYear() - b.getFullYear();
+        if (t.getMonth() < b.getMonth() ||
+           (t.getMonth() === b.getMonth() && t.getDate() < b.getDate())) age--;
+        out.textContent = age >= 0 ? age + " years" : "—";
+    }
+    dob.addEventListener("input", update);
+    update();
+})();
+</script>
+{% endblock %}

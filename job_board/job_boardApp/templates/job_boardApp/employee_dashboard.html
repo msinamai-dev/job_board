@@ -1,0 +1,88 @@
+{% extends "job_boardApp/base.html" %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3>Welcome, {{ seeker.full_name }}</h3>
+        <p class="text-muted mb-0">{{ match_count }} job match(es) • {{ pending_invite_count }} pending interview invite(s)</p>
+    </div>
+    <a href="{% url 'job_boardApp:edit_profile' %}" class="btn btn-outline-primary">Edit Profile</a>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h6 class="card-title">Your Profile Summary</h6>
+        <p class="mb-1"><strong>Skills:</strong> {{ seeker.skills }}</p>
+        <p class="mb-1"><strong>Location:</strong> {{ seeker.location }}</p>
+        <p class="mb-0"><strong>Experience:</strong> {{ seeker.experience_years }} years</p>
+    </div>
+</div>
+
+<h5>Interview Invites</h5>
+<div class="row mb-4">
+    {% for invite in invites %}
+    <div class="col-md-6 mb-3">
+        <div class="card h-100 {% if invite.status == 'pending' %}border-warning{% elif invite.status == 'accepted' %}border-success{% else %}border-secondary{% endif %}">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <h5 class="card-title">{{ invite.match.job.title }}</h5>
+                    {% if invite.status == "accepted" %}
+                        <span class="badge bg-success align-self-start">Accepted</span>
+                    {% elif invite.status == "declined" %}
+                        <span class="badge bg-secondary align-self-start">Declined</span>
+                    {% else %}
+                        <span class="badge bg-warning text-dark align-self-start">Pending</span>
+                    {% endif %}
+                </div>
+                <h6 class="card-subtitle mb-2 text-muted">{{ invite.employer.company_name }}</h6>
+                <p class="card-text mb-1">📅 <strong>Date:</strong> {{ invite.interview_date }}</p>
+                <p class="card-text mb-1">🕒 <strong>Time:</strong> {{ invite.interview_time }}</p>
+                <p class="card-text mb-1">📍 <strong>Venue:</strong> {{ invite.venue }}</p>
+                {% if invite.note %}<p class="card-text small text-muted">{{ invite.note }}</p>{% endif %}
+
+                {% if invite.status == "pending" %}
+                <div class="mt-2">
+                    <a href="{% url 'job_boardApp:respond_to_invite' invite.id 'accept' %}" class="btn btn-sm btn-success">Accept</a>
+                    <a href="{% url 'job_boardApp:respond_to_invite' invite.id 'decline' %}" class="btn btn-sm btn-outline-danger">Decline</a>
+                </div>
+                {% else %}
+                <div class="mt-2">
+                    <a href="{% url 'job_boardApp:submit_feedback' invite.id %}" class="btn btn-sm btn-outline-secondary">Leave Feedback</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-muted">No interview invites yet.</p>
+    {% endfor %}
+</div>
+
+<h5>Your Matched Jobs</h5>
+<div class="row">
+    {% for match in matches %}
+    <div class="col-md-6 mb-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <h5 class="card-title">{{ match.job.title }}</h5>
+                    <span class="badge bg-primary align-self-start">Score: {{ match.score }}</span>
+                </div>
+                <h6 class="card-subtitle mb-2 text-muted">{{ match.job.employer.company_name }}</h6>
+                <p class="card-text small">{{ match.job.location }} • {{ match.job.min_experience }}+ yrs • {{ match.job.salary }}</p>
+                <a href="{% url 'job_boardApp:job_detail' match.job.id %}" class="btn btn-sm btn-outline-primary">View Job</a>
+                <form method="post" action="{% url 'job_boardApp:dismiss_match' match.id %}"
+                      onsubmit="return confirm('Remove \'{{ match.job.title }}\' from your matches? It won\'t appear here again.');"
+                      class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-secondary">Not Interested</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-muted">No matches yet. Try broadening your skills list or check back later — matching runs automatically as new jobs are posted.</p>
+    {% endfor %}
+</div>
+
+{% endblock %}

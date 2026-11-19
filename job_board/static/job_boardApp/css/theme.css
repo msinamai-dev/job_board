@@ -1,0 +1,16 @@
+body {
+    background-color: #f7f8fa;
+}
+.navbar-brand {
+    letter-spacing: 0.5px;
+}
+.card {
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+#notif-count {
+    position: absolute;
+    top: 2px;
+    right: -6px;
+    font-size: 0.6rem;
+}

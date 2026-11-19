@@ -1,0 +1,45 @@
+{% extends "job_boardApp/base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h3>Edit Profile</h3>
+        <p class="text-muted">Updating your profile automatically re-runs matching against all open jobs.</p>
+
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label">Full Name</label>
+                <input type="text" name="full_name" class="form-control" value="{{ seeker.full_name }}" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Job Title / Role</label>
+                <input type="text" name="jtitle" class="form-control" value="{{ seeker.jtitle }}" placeholder="e.g. IT Assistant">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Skills</label>
+                <input type="text" name="skills" class="form-control" value="{{ seeker.skills }}" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Location</label>
+                <input type="text" name="location" class="form-control" value="{{ seeker.location }}" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Years of Experience</label>
+                <input type="number" name="experience_years" class="form-control" min="0" value="{{ seeker.experience_years }}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Bio</label>
+                <textarea name="bio" class="form-control" rows="3">{{ seeker.bio }}</textarea>
+            </div>
+        <div class="mb-3">
+    <label class="form-label">CV</label>
+    {% include "job_boardApp/_cv_preview.html" with seeker=seeker %}
+    <input type="file" name="cv" class="form-control mt-2" accept=".pdf,.docx,.txt">
+    <div class="form-text">PDF, DOCX or TXT, max 5 MB. Uploading a new file replaces the current one.</div>
+</div>
+            <button type="submit" class="btn btn-primary">Save & Re-Match</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

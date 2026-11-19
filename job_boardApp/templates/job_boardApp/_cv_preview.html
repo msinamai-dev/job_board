@@ -1,0 +1,20 @@
+{% if seeker.cv %}
+<div class="d-flex gap-2 mb-2">
+    <a href="{% url 'job_boardApp:view_cv' seeker.id %}" target="_blank" class="btn btn-outline-primary btn-sm">Open CV</a>
+    <a href="{% url 'job_boardApp:view_cv' seeker.id %}?download=1" class="btn btn-outline-secondary btn-sm">Download</a>
+</div>
+
+{% if preview %}
+    {# Desktop only: inline preview #}
+    {% if seeker.cv_ext == ".pdf" or seeker.cv_ext == ".txt" %}
+        <iframe src="{% url 'job_boardApp:view_cv' seeker.id %}" class="d-none d-md-block w-100 border rounded"
+                style="height:600px;" title="CV preview"></iframe>
+    {% elif seeker.cv_text_cache %}
+        {# DOCX can't render in a browser, so show the extracted text #}
+        <div class="d-none d-md-block border rounded p-3 small bg-light"
+             style="max-height:600px; overflow:auto; white-space:pre-wrap;">{{ seeker.cv_text_cache }}</div>
+    {% endif %}
+{% endif %}
+{% else %}
+<p class="text-muted small">No CV uploaded.</p>
+{% endif %}

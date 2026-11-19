@@ -1,0 +1,36 @@
+{% extends "job_boardApp/base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h3>Employer Sign Up</h3>
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                <input type="text" name="username" class="form-control" required
+                pattern="(?=.*[A-Za-z])[A-Za-z0-9_]{3,30}"
+                title="3-30 characters with at least one letter (numbers and underscores are allowed, but not numbers only)"
+                value="{{ form_data.username }}">
+                <div class="form-text">At least one letter. Letters only is fine; numbers alone are not allowed.</div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Password</label>
+                <input type="password" name="password" class="form-control" required minlength="10"
+                       pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{10,}"
+                       title="At least 10 characters with an uppercase letter, a lowercase letter, a number and a symbol">
+                <div class="form-text"></div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Company Name</label>
+                <input type="text" name="company_name" class="form-control" required
+                       value="{{ form_data.company_name }}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Company Location</label>
+                <input type="text" name="location" class="form-control" placeholder="e.g. Harare">
+            </div>
+            <button type="submit" class="btn btn-success">Create Employer Account</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

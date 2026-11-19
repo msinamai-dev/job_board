@@ -1,0 +1,75 @@
+{% extends "job_boardApp/base.html" %}
+{% block content %}
+
+<h3>Analytics</h3>
+<p class="text-muted">Real-time snapshot of your hiring pipeline.</p>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card text-center p-3">
+            <h2 class="mb-0">{{ total_jobs }}</h2>
+            <small class="text-muted">Jobs posted ({{ active_jobs }} active)</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center p-3">
+            <h2 class="mb-0">{{ total_matches }}</h2>
+            <small class="text-muted">Candidate matches</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center p-3">
+            <h2 class="mb-0">{{ avg_match_score }}%</h2>
+            <small class="text-muted">Average match score</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center p-3">
+            <h2 class="mb-0">{{ archived_jobs }}</h2>
+            <small class="text-muted">Completed & archived jobs</small>
+        </div>
+    </div>
+</div>
+
+<h5>Interview Invite Funnel</h5>
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card text-center p-3 border-primary">
+            <h2 class="mb-0">{{ total_invites }}</h2>
+            <small class="text-muted">Invites sent</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center p-3 border-success">
+            <h2 class="mb-0">{{ invites_accepted }}</h2>
+            <small class="text-muted">Accepted</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center p-3 border-danger">
+            <h2 class="mb-0">{{ invites_declined }}</h2>
+            <small class="text-muted">Declined</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center p-3 border-warning">
+            <h2 class="mb-0">{{ invites_pending }}</h2>
+            <small class="text-muted">Awaiting response</small>
+        </div>
+    </div>
+</div>
+
+<div class="progress mb-4" style="height: 24px;">
+    <div class="progress-bar bg-success" style="width: {{ acceptance_rate }}%">{{ acceptance_rate }}% acceptance rate</div>
+</div>
+
+<h5>Candidate Satisfaction</h5>
+<div class="card p-3">
+    {% if feedback_count %}
+        <p class="mb-0">Average rating from candidates: <strong>{{ avg_satisfaction }} / 5</strong> ({{ feedback_count }} response{{ feedback_count|pluralize }})</p>
+    {% else %}
+        <p class="text-muted mb-0">No feedback submitted yet.</p>
+    {% endif %}
+</div>
+
+{% endblock %}

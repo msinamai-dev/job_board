@@ -1,0 +1,19 @@
+{% extends "job_boardApp/base.html" %}
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5 mb-3">
+        <div class="card text-center p-4 h-100">
+            <h4>I'm a Job Seeker</h4>
+            <p class="text-muted">Create a profile and get matched with jobs automatically.</p>
+            <a href="{% url 'job_boardApp:register_seeker' %}" class="btn btn-primary">Sign up as Job Seeker</a>
+        </div>
+    </div>
+    <div class="col-md-5 mb-3">
+        <div class="card text-center p-4 h-100">
+            <h4>I'm an Employer</h4>
+            <p class="text-muted">Post jobs and get matched with qualified candidates automatically.</p>
+            <a href="{% url 'job_boardApp:register_employer' %}" class="btn btn-success">Sign up as Employer</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

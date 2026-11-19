@@ -1,0 +1,97 @@
+{% extends "job_boardApp/base.html" %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3>{{ employer.company_name }}</h3>
+        <p class="text-muted mb-0">{{ job_count }} job(s) posted • {{ match_count }} candidate match(es)</p>
+    </div>
+    <a href="{% url 'job_boardApp:post_job' %}" class="btn btn-success">+ Post a New Job</a>
+</div>
+
+<h5>Your Job Postings</h5>
+<div class="table-responsive mb-5">
+    <table class="table table-hover align-middle">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Location</th>
+                <th>Min. Experience</th>
+                <th>Matches</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for job in jobs %}
+            <tr>
+                <td>{{ job.title }}</td>
+                <td>{{ job.location }}</td>
+                <td>{{ job.min_experience }} yrs</td>
+                <td>
+                    {% if job.matches.count %}
+                        <a href="{% url 'job_boardApp:job_candidates' job.id %}">{{ job.matches.count }} — View & get advice</a>
+                    {% else %}
+                        0
+                    {% endif %}
+                </td>
+                <td>
+                    <form method="post" action="{% url 'job_boardApp:close_job' job.id %}"
+                          onsubmit="return confirm('Close and permanently delete \'{{ job.title }}\'? This archives its interview history to Audit History but cannot be undone.');"
+                          class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Close Vacancy</button>
+                    </form>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5" class="text-muted text-center">No jobs posted yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<h5>Matched Candidates</h5>
+<div class="table-responsive">
+    <table class="table table-hover align-middle">
+        <thead>
+            <tr>
+                <th>Candidate</th>
+                <th>Matched Job</th>
+                <th>Match Score</th>
+                <th>Location</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for match in matches %}
+            {% with latest_invite=match.invites.first %}
+            <tr>
+                <td>{{ match.job_seeker.full_name }}</td>
+                <td>{{ match.job.title }}</td>
+                <td>
+                    <span class="badge bg-primary">{{ match.score|floatformat:0|default:match.score }}</span>
+                </td>
+                <td>{{ match.job_seeker.location }}</td>
+                <td>
+                    <a href="{% url 'job_boardApp:candidate_detail' match.job_seeker.id %}" class="btn btn-sm btn-outline-primary">View</a>
+                    {% if not latest_invite %}
+                        <a href="{% url 'job_boardApp:send_interview_invite' match.id %}" class="btn btn-sm btn-success">Send Interview Invite</a>
+                    {% elif latest_invite.status == "pending" %}
+                        <span class="badge bg-warning text-dark">Pending Response</span>
+                    {% elif latest_invite.status == "accepted" %}
+                        <span class="badge bg-success">Accepted</span>
+                    {% elif latest_invite.status == "declined" %}
+                        <span class="badge bg-danger">Declined</span>
+                        <a href="{% url 'job_boardApp:send_interview_invite' match.id %}" class="btn btn-sm btn-outline-secondary">Send New Invite</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endwith %}
+            {% empty %}
+            <tr><td colspan="5" class="text-muted text-center">No matches yet</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "job_boardApp/base.html" %}
+{% block content %}
+
+<h3>My Analytics</h3>
+<p class="text-muted">Real-time snapshot of your applications and matches.</p>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card text-center p-3">
+            <h2 class="mb-0">{{ total_matches }}</h2>
+            <small class="text-muted">Jobs matched</small>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center p-3">
+            <h2 class="mb-0">{{ avg_match_score }}%</h2>
+            <small class="text-muted">Average match score</small>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center p-3">
+            <h2 class="mb-0">{{ total_invites }}</h2>
+            <small class="text-muted">Interview invites received</small>
+        </div>
+    </div>
+</div>
+
+<h5>Your Invite Responses</h5>
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card text-center p-3 border-success">
+            <h2 class="mb-0">{{ invites_accepted }}</h2>
+            <small class="text-muted">Accepted</small>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center p-3 border-danger">
+            <h2 class="mb-0">{{ invites_declined }}</h2>
+            <small class="text-muted">Declined</small>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center p-3 border-warning">
+            <h2 class="mb-0">{{ invites_pending }}</h2>
+            <small class="text-muted">Awaiting your response</small>
+        </div>
+    </div>
+</div>
+
+<h5>Feedback You've Given</h5>
+<div class="card p-3">
+    {% if feedback_count %}
+        <p class="mb-0">You've rated {{ feedback_count }} interview{{ feedback_count|pluralize }}, averaging <strong>{{ avg_satisfaction_given }} / 5</strong>.</p>
+    {% else %}
+        <p class="text-muted mb-0">You haven't left feedback on any interviews yet — you can do this from your dashboard after responding to an invite.</p>
+    {% endif %}
+</div>
+
+{% endblock %}
